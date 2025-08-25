@@ -145,8 +145,7 @@ class UXAnalyzer:
             results['metadata'] = {
                 'total_apps': sum(len(apps) for apps in apps_by_platform.values()),
                 'total_reviews': len(all_reviews),
-                'clusters_found': len(clusters),
-                'processing_time': None  # TODO: Add timing
+                'clusters_found': len(clusters)
             }
             
             logger.success(f"Analysis completed successfully for {category}")

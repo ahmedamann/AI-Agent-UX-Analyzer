@@ -7,7 +7,7 @@ for analysis and clustering.
 
 import re
 import pandas as pd
-from typing import List, Dict, Any, Optional
+from typing import List, Dict, Any
 from loguru import logger
 
 try:
@@ -19,13 +19,6 @@ try:
 except ImportError:
     NLTK_AVAILABLE = False
     logger.warning("NLTK not available, using basic text processing")
-
-try:
-    from textblob import TextBlob
-    TEXTBLOB_AVAILABLE = True
-except ImportError:
-    TEXTBLOB_AVAILABLE = False
-    logger.warning("TextBlob not available, sentiment analysis disabled")
 
 
 class DataProcessor:
@@ -87,13 +80,9 @@ class DataProcessor:
             # Step 3: Create structured data
             structured_data = self.create_structured_data(processed_reviews)
             
-            # Step 4: Generate metadata
-            metadata = self.generate_metadata(processed_reviews)
-            
             return {
                 'reviews': processed_reviews,
                 'structured_data': structured_data,
-                'metadata': metadata,
                 'processing_config': self.processing_config
             }
             
@@ -199,23 +188,9 @@ class DataProcessor:
                 processed_review = review.copy()
                 text = review['text']
                 
-                # Extract sentiment if available
-                if TEXTBLOB_AVAILABLE and self.processing_config.get('sentiment_analysis', True):
-                    sentiment = self.extract_sentiment(text)
-                    processed_review['sentiment'] = sentiment
-                
-                # Extract language if enabled
-                if self.processing_config.get('language_detection', True):
-                    language = self.detect_language(text)
-                    processed_review['language'] = language
-                
-                # Extract keywords
+                # Extract keywords (used by clustering)
                 keywords = self.extract_keywords(text)
                 processed_review['keywords'] = keywords
-                
-                # Extract text features
-                text_features = self.extract_text_features(text)
-                processed_review.update(text_features)
                 
                 processed_reviews.append(processed_review)
                 
@@ -224,55 +199,6 @@ class DataProcessor:
                 processed_reviews.append(review)
         
         return processed_reviews
-    
-    def extract_sentiment(self, text: str) -> Dict[str, float]:
-        """
-        Extract sentiment from text using TextBlob.
-        
-        Args:
-            text: Text to analyze
-            
-        Returns:
-            Dictionary with polarity and subjectivity scores
-        """
-        if not TEXTBLOB_AVAILABLE:
-            return {'polarity': 0.0, 'subjectivity': 0.0}
-        
-        try:
-            blob = TextBlob(text)
-            return {
-                'polarity': blob.sentiment.polarity,
-                'subjectivity': blob.sentiment.subjectivity
-            }
-        except Exception as e:
-            logger.warning(f"Failed to extract sentiment: {e}")
-            return {'polarity': 0.0, 'subjectivity': 0.0}
-    
-    def detect_language(self, text: str) -> str:
-        """
-        Detect language of text.
-        
-        Args:
-            text: Text to analyze
-            
-        Returns:
-            Language code
-        """
-        # Simple language detection based on common words
-        # In a real implementation, you would use a proper language detection library
-        
-        english_words = {'the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'}
-        spanish_words = {'el', 'la', 'de', 'que', 'y', 'a', 'en', 'un', 'es', 'se', 'no', 'te', 'lo', 'le'}
-        
-        words = set(text.lower().split())
-        
-        english_count = len(words.intersection(english_words))
-        spanish_count = len(words.intersection(spanish_words))
-        
-        if spanish_count > english_count:
-            return 'es'
-        else:
-            return 'en'
     
     def extract_keywords(self, text: str) -> List[str]:
         """
@@ -309,29 +235,6 @@ class DataProcessor:
             logger.warning(f"Failed to extract keywords: {e}")
             return []
     
-    def extract_text_features(self, text: str) -> Dict[str, Any]:
-        """
-        Extract various text features.
-        
-        Args:
-            text: Text to analyze
-            
-        Returns:
-            Dictionary of text features
-        """
-        words = text.split()
-        
-        return {
-            'word_count': len(words),
-            'char_count': len(text),
-            'avg_word_length': sum(len(word) for word in words) / len(words) if words else 0,
-            'sentence_count': text.count('.') + text.count('!') + text.count('?'),
-            'has_question': '?' in text,
-            'has_exclamation': '!' in text,
-            'has_uppercase': any(c.isupper() for c in text),
-            'has_numbers': any(c.isdigit() for c in text)
-        }
-    
     def create_structured_data(self, reviews: List[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Create structured data for analysis.
@@ -348,63 +251,8 @@ class DataProcessor:
         # Create text corpus
         texts = [review['text'] for review in reviews]
         
-        # Create rating distribution
-        rating_distribution = df['rating'].value_counts().to_dict() if 'rating' in df.columns else {}
-        
-        # Create sentiment distribution
-        if 'sentiment' in df.columns:
-            polarities = [s.get('polarity', 0) for s in df['sentiment']]
-            sentiment_distribution = {
-                'positive': len([p for p in polarities if p > 0.1]),
-                'neutral': len([p for p in polarities if -0.1 <= p <= 0.1]),
-                'negative': len([p for p in polarities if p < -0.1])
-            }
-        else:
-            sentiment_distribution = {}
-        
         return {
             'dataframe': df,
             'texts': texts,
-            'rating_distribution': rating_distribution,
-            'sentiment_distribution': sentiment_distribution,
             'total_reviews': len(reviews)
-        }
-    
-    def generate_metadata(self, reviews: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """
-        Generate metadata about the processed reviews.
-        
-        Args:
-            reviews: List of processed reviews
-            
-        Returns:
-            Dictionary containing metadata
-        """
-        if not reviews:
-            return {}
-        
-        # Basic statistics
-        total_reviews = len(reviews)
-        avg_rating = sum(r.get('rating', 0) for r in reviews) / total_reviews
-        avg_length = sum(r.get('text_length', 0) for r in reviews) / total_reviews
-        
-        # Platform distribution
-        platform_distribution = {}
-        for review in reviews:
-            platform = review.get('platform', 'unknown')
-            platform_distribution[platform] = platform_distribution.get(platform, 0) + 1
-        
-        # Language distribution
-        language_distribution = {}
-        for review in reviews:
-            language = review.get('language', 'unknown')
-            language_distribution[language] = language_distribution.get(language, 0) + 1
-        
-        return {
-            'total_reviews': total_reviews,
-            'average_rating': round(avg_rating, 2),
-            'average_length': round(avg_length, 2),
-            'platform_distribution': platform_distribution,
-            'language_distribution': language_distribution,
-            'processing_timestamp': pd.Timestamp.now().isoformat()
         } 

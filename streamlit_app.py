@@ -3,7 +3,6 @@ import asyncio
 import json
 import pandas as pd
 import plotly.express as px
-import plotly.graph_objects as go
 from pathlib import Path
 import time
 from datetime import datetime

@@ -22,9 +22,6 @@ data_processing:
   max_review_length: 1000
   min_word_count: 3      # Minimum 3 words
   remove_duplicates: true
-  sentiment_analysis: true
-  language_detection: true
-  supported_languages: ["en", "es", "fr", "de", "it", "pt"]
 
 # Clustering Configuration
 clustering:
@@ -58,23 +55,11 @@ rate_limiting:
 categories:
   travel:
     keywords: ["travel", "tourism", "booking", "hotel", "flight", "vacation"]
-    subcategories: ["booking", "navigation", "local_guides", "transportation"]
   finance:
     keywords: ["finance", "banking", "investment", "budget", "money", "payment"]
-    subcategories: ["banking", "investment", "budgeting", "payment", "crypto"]
   gaming:
     keywords: ["game", "gaming", "entertainment", "puzzle", "action", "strategy"]
-    subcategories: ["action", "puzzle", "strategy", "rpg", "casual", "sports"]
   productivity:
     keywords: ["productivity", "work", "office", "business", "management", "collaboration"]
-    subcategories: ["office", "project_management", "communication", "file_management"]
   health:
-    keywords: ["health", "fitness", "medical", "wellness", "exercise", "nutrition"]
-    subcategories: ["fitness", "medical", "mental_health", "nutrition", "sleep"]
-
-# Output Configuration
-output:
-  format: "json"  # Options: json, csv, html
-  include_raw_data: false
-  include_visualizations: true
-  save_intermediate_results: true 
+    keywords: ["health", "fitness", "medical", "wellness", "exercise", "nutrition"] 
