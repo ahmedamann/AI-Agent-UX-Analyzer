@@ -39,21 +39,15 @@ AI Agent UX Analyzer/
 
 ## Quick Start
 
-1. **Setup Conda Environment**:
+1. **Clone the Repository**:
    ```bash
-   conda activate jobenv
+   git clone https://github.com/ahmedamann/AI-Agent-UX-Analyzer.git
+   cd AI-Agent-UX-Analyzer
    ```
 
 2. **Install Dependencies**:
    ```bash
-   # Core dependencies
-   conda install -c conda-forge streamlit loguru pyyaml aiohttp numpy pandas scikit-learn requests plotly
-   
-   # App store scraping
-   /opt/anaconda3/envs/jobenv/bin/pip install google-play-scraper
-   
-   # LLM integration
-   /opt/anaconda3/envs/jobenv/bin/pip install langchain-mistralai
+   pip install -r requirements.txt
    ```
 
 3. **Configure API Keys**:
@@ -118,13 +112,13 @@ The app displays:
 ### 3. Data Processing
 - Cleans and normalizes review text
 - Removes duplicates and short reviews (less than 20 characters, 3 words)
-- Filters out non-English reviews
+- Extracts keywords for clustering analysis
 
 ### 4. Clustering Analysis
 - Uses **TF-IDF vectorization** to convert text to numerical features
-- Applies **K-means clustering** with dynamic cluster optimization
+- Applies **K-means clustering** with 8 clusters by default
 - Identifies feedback patterns and groups similar reviews
-- Calculates cluster statistics and balance scores
+- Calculates cluster statistics and keyword analysis
 
 ### 5. LLM Analysis
 - **Smart Review Selection**: Picks representative reviews from each cluster
@@ -150,10 +144,9 @@ api_keys:
 clustering:
   algorithm: "kmeans"
   n_clusters: 8
-  min_cluster_size: 20
   feature_extraction:
     method: "tfidf"
-    max_features: 1500
+    max_features: 2000
     ngram_range: [1, 3]
 ```
 
@@ -169,9 +162,9 @@ data_processing:
 ## Technical Details
 
 ### Clustering Algorithm
-- **Feature Extraction**: TF-IDF with 1500 features, n-gram range (1,3)
-- **Clustering**: K-means with dynamic cluster optimization
-- **Balance Optimization**: Automatic cluster number selection for better distribution
+- **Feature Extraction**: TF-IDF with 2000 features, n-gram range (1,3)
+- **Clustering**: K-means with 8 clusters
+- **Keyword Analysis**: Extracts common keywords from each cluster
 
 ### LLM Integration
 - **Provider**: Mistral AI via LangChain wrapper
