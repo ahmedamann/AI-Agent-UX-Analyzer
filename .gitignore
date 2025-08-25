@@ -103,7 +103,6 @@ coverage.xml
 *.old
 
 # API keys and sensitive data
-config.yaml
 secrets.yaml
 *.key
 *.pem 

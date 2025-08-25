@@ -1,0 +1,80 @@
+# AI Agent UX Analyzer Configuration
+
+# API Keys and Credentials
+api_keys:
+  mistral:
+    api_key: "wS4XhTjU1SYCdRPdJUX6Nl6YTa9tsnjc"  # Your Mistral API key
+    model: "mistral-small-latest"
+    max_tokens: 2000
+
+# App Store Configuration
+app_stores:
+  google_play:
+    enabled: true
+    max_apps_per_category: 100
+    max_reviews_per_app: 1000
+    country: "US"
+    language: "en"
+
+# Data Processing
+data_processing:
+  min_review_length: 20  # Increased minimum length
+  max_review_length: 1000
+  min_word_count: 3      # Minimum 3 words
+  remove_duplicates: true
+  sentiment_analysis: true
+  language_detection: true
+  supported_languages: ["en", "es", "fr", "de", "it", "pt"]
+
+# Clustering Configuration
+clustering:
+  algorithm: "kmeans"   # Using K-means for clustering
+  n_clusters: 8         # Number of clusters to create
+  feature_extraction:
+    method: "tfidf"     # TF-IDF for text feature extraction
+    max_features: 2000  # Number of features for clustering
+    ngram_range: [1, 3] # Include trigrams for better context
+
+# LLM Analysis
+llm_analysis:
+  provider: "mistral"  # Using Mistral API
+  temperature: 0.7
+  max_retries: 3
+  timeout: 30
+  prompt_template: "default"
+
+# Logging
+logging:
+  level: "INFO"  # Options: DEBUG, INFO, WARNING, ERROR
+  format: "{time:YYYY-MM-DD HH:mm:ss} | {level} | {name}:{function}:{line} - {message}"
+  file: "logs/ux_analyzer.log"
+
+# Rate Limiting
+rate_limiting:
+  requests_per_minute: 60
+  delay_between_requests: 1.0  # seconds
+
+# Categories Configuration
+categories:
+  travel:
+    keywords: ["travel", "tourism", "booking", "hotel", "flight", "vacation"]
+    subcategories: ["booking", "navigation", "local_guides", "transportation"]
+  finance:
+    keywords: ["finance", "banking", "investment", "budget", "money", "payment"]
+    subcategories: ["banking", "investment", "budgeting", "payment", "crypto"]
+  gaming:
+    keywords: ["game", "gaming", "entertainment", "puzzle", "action", "strategy"]
+    subcategories: ["action", "puzzle", "strategy", "rpg", "casual", "sports"]
+  productivity:
+    keywords: ["productivity", "work", "office", "business", "management", "collaboration"]
+    subcategories: ["office", "project_management", "communication", "file_management"]
+  health:
+    keywords: ["health", "fitness", "medical", "wellness", "exercise", "nutrition"]
+    subcategories: ["fitness", "medical", "mental_health", "nutrition", "sleep"]
+
+# Output Configuration
+output:
+  format: "json"  # Options: json, csv, html
+  include_raw_data: false
+  include_visualizations: true
+  save_intermediate_results: true 
