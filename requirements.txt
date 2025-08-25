@@ -1,0 +1,29 @@
+# Core dependencies - basic set (no conflicts)
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+pandas>=2.1.0
+numpy>=1.24.0
+pyyaml>=6.0.0
+loguru>=0.7.0
+tqdm>=4.66.0
+
+# Web interface
+streamlit>=1.28.0
+plotly>=5.17.0
+
+# Data processing
+scikit-learn>=1.3.0
+textblob>=0.17.0
+
+# LLM and AI
+# Using Mistral AI via LangChain
+
+# Web scraping (using aiohttp instead of problematic scrapers)
+aiohttp>=3.9.0
+
+# Visualization
+matplotlib>=3.7.0
+seaborn>=0.12.0
+
+# Development
+pytest>=7.4.0 
